@@ -17,7 +17,6 @@ class User < ApplicationRecord
                         uniqueness: { case_sensitive: false },
                         length: { minimum: 2, maximum: 32 }
 
-  validates :password, length: { minimum: 8 }
-  # , allow_nil: true
+  validates :password, length: { minimum: 8 }, allow_nil: true #for update form, skips password validation when no password provided
 
 end

@@ -14,9 +14,21 @@ Rails.application.routes.draw do
 
   namespace :api do 
     namespace :v1 do 
-      resources :quotes 
+      resources :quotes do 
+        collection do 
+          get 'random', to: 'quotes#show_random'
+        end 
+      end 
       resources :tags 
-      resources :users 
+      resources :users, only: [:show, :index, :update, :destroy]
+
+      namespace :auth do 
+        resource :csrf, only: :show
+        post 'sign_up' => 'users#create'
+        post 'login' => 'sessions#create'
+        get 'me' => 'sessions#show'
+        delete 'logout' => 'sessions#destroy'
+      end 
     end 
   end 
 end

@@ -7,8 +7,8 @@ module Api
 
 
         def create
-          user = User.find_by(email: params[:user][:email].to_s.downcase.strip)
-          if user&.authenticate(params[:user][:password])
+          user = User.find_by(email: login_params[:email].to_s.downcase.strip)
+          if user&.authenticate(login_params[:password])
             session[:user_id] = user.id 
             render json: user, status: :ok
           else
@@ -22,9 +22,6 @@ module Api
         end 
 
         def show
-          # render json: { logged_in: true, user: user_json(current_user) }, status: :ok
-          # i think this needs to return something on false
-
           if current_user
             render json: { logged_in: true, user: user_json(current_user) }, status: :ok
           else
@@ -34,6 +31,10 @@ module Api
 
         private
         def user_json(u) = { id: u.id, username: u.username, email: u.email }
+
+        def login_params 
+          params.require(:user).permit(:email, :password)
+        end 
 
       end 
     end

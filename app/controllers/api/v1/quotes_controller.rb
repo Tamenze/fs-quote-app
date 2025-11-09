@@ -7,11 +7,19 @@ module Api
 
 
       def index 
-        quotes = Quote.includes(:tags, :user).order(created_at: :desc)
-        render json: quotes.as_json(include: {
-          tags: { only: [:id, :name] },
-          user: { only: [:id, :username]} 
-        })
+        scope = Quote.includes(:tags, :user).order(created_at: :desc)
+        @pagy, quotes = pagy(scope)
+        render json: {
+          quotes: quotes.as_json(
+            only: %i[id body attribution created_at updated_at],
+            include: {
+              user: { only: %i[id username] },
+              tags: { only: %i[id name] }
+            }
+          ),
+          pagination: @pagy.data_hash
+        }
+
       end 
 
       def create 
@@ -36,7 +44,10 @@ module Api
         end
 
         if @quote.update(quote_params)
-          render json: @quote
+          render json: @quote.as_json(include: {
+            tags: { only: [:id, :name] },
+            user: { only: [:id, :username]} 
+          }), status: :ok
         else
           puts @quote.errors
           render json: { errors: @quote.errors }, status: :unprocessable_entity
@@ -83,10 +94,6 @@ module Api
         #future add to above line:  || user.admin? 
         render json: { error: "Not allowed" }, status: :forbidden 
       end
-
-      # def quote_json(quote)
-          # want this to be used for index and show, so needs to include associations and apply to multiples 
-      # end 
 
       def quote_params 
         params.require(:quote).permit(:body, :attribution, tag_ids: [])

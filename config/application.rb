@@ -8,6 +8,13 @@ Bundler.require(*Rails.groups)
 
 module Aword
   class Application < Rails::Application
+    
+    # API-only app, but we add cookies + session back
+    config.api_only = true
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore, key: "_aword_session", same_site: :lax, secure: Rails.env.production?
+
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 

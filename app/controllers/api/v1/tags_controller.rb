@@ -18,22 +18,29 @@ module Api
       def index 
         render json: Tag.all 
       end
+      
+      def show
+         tag = Tag.includes(:creator, quotes: :user).find(params[:id])
+         scope = tag.quotes.includes(:user)
 
+         @pagy, quotes = pagy(scope)
 
-      def show 
-        tag = Tag.includes(:creator, quotes: :user).find(params[:id])
-        render json: tag.as_json(
-          only: [:id, :name, :created_at],
-           include: {
-            creator: { only: [:id, :username] },
-            quotes: {
-              only: [:id, :body, :attribution, :created_at, :updated_at],
-              include: {
-                user: { only: [:id, :username]}
-              }
-            }
-          })
+        tag_json = tag.as_json(
+          only: %i[id name created_at],
+          include: { creator: { only: %i[id username] } }
+        )
+
+        quotes_json = quotes.as_json(
+          only: %i[id body attribution created_at updated_at],
+          include: { user: { only: %i[id username] } }
+        )
+
+        render json: {
+          tag: tag_json.merge(quotes: quotes_json),
+          pagination: @pagy.data_hash
+        }, status: :ok
       end 
+
 
       def destroy 
         tag = Tag.find(params[:id])

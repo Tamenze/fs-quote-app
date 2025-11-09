@@ -13,21 +13,32 @@ module Api
       end 
 
       def show 
-        render json: @user.as_json(
-          only: [:id, :username, :email, :created_at, :updated_at],
+        scope = @user.quotes
+                .includes(:tags, :user)        
+                .order(created_at: :desc) 
+        @pagy, quotes = pagy(scope) 
+        
+
+        user_json = @user.as_json(only: %i[id username email created_at updated_at])
+
+        # Inject the paginated quotes
+        user_json[:quotes] = quotes.as_json(
+          only: %i[id body attribution created_at updated_at],
           include: {
-            quotes: {
-              only: [:id, :body, :attribution, :created_at, :updated_at]
-            },
-            created_tags: {
-              only: [:id, :name]
-            }
-        }), status: :ok
-      end
+            user: { only: %i[id username] },
+            tags: { only: %i[id name] }
+          }
+        )
+
+        user_json[:created_tags] = @user.created_tags.as_json(only: %i[id name])
+
+        render json: {
+          user: user_json,
+          pagination: @pagy.data_hash     
+        }, status: :ok
+      end 
 
       def update 
-        # @user = current_user 
-
         if user_params[:username].present? 
           @user.assign_attributes(user_params.slice(:username))
         end
@@ -50,13 +61,14 @@ module Api
 
 
       def destroy 
+        #tk
       end 
 
       private
 
       def set_user
         begin
-          @user = User.includes(:quotes, :created_tags).find(params[:id])
+          @user = User.includes(:created_tags, quotes: [:user, :tags]).find(params[:id])
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'User not found' }, status: :not_found and return 
         end
@@ -65,11 +77,6 @@ module Api
       def user_params
         params.require(:user).permit(:username, :current_password, :password, :password_confirmation)
       end 
-
-      def user_json(user)
-        { id: user.id, username: user.username, email: user.email, }
-        #also needs to return user quotes, tags, etc 
-      end
 
       def authorize_user
         # only the logged-in user can update their own record

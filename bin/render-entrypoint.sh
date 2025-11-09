@@ -9,9 +9,9 @@ bundle exec rails db:migrate
 
 # --- 2) Ensure Solid schemas are loaded (this is what fixes solid_cache_entries)
 echo "[entrypoint] Loading Solid schemas…"
-bundle exec rails db:load_schema:cache  || echo "[entrypoint] cache schema already applied or task missing"
-bundle exec rails db:load_schema:queue  || echo "[entrypoint] queue schema already applied or task missing"
-bundle exec rails db:load_schema:cable  || echo "[entrypoint] cable schema already applied or task missing"
+bundle exec rails db:schema:load:cache  || echo "[entrypoint] cache schema already applied or task missing"
+bundle exec rails db:schema:load:queue  || echo "[entrypoint] queue schema already applied or task missing"
+bundle exec rails db:schema:load:cable  || echo "[entrypoint] cable schema already applied or task missing"
 
 # --- 3) (Optional) Danger: prod reset + reseed if explicitly requested
 if [[ "${RUN_PROD_RESET:-0}" == "1" ]]; then

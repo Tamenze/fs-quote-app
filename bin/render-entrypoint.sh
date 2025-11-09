@@ -29,10 +29,14 @@ if ! retry 6 3 bundle exec rails db:migrate; then
   fi
 fi
 
-echo "[entrypoint] Loading Solid schemas..."
-retry 3 3 bundle exec rails db:schema:load:cache  || echo "[entrypoint] cache schema load skipped/ok"
-retry 3 3 bundle exec rails db:schema:load:queue || echo "[entrypoint] queue schema load skipped/ok"
-retry 3 3 bundle exec rails db:schema:load:cable  || echo "[entrypoint] cable schema load skipped/ok"
+echo "[entrypoint] Ensuring Solid schemas (non-destructive)…"
+# Solid Cache
+bundle exec rails runner 'c=ActiveRecord::Base.connection; unless c.table_exists?("solid_cache_entries"); puts("[entrypoint] Creating solid_cache_entries…"); load Rails.root.join("db/cache_schema.rb"); end' || true
+# Solid Queue
+bundle exec rails runner 'c=ActiveRecord::Base.connection; unless c.table_exists?("solid_queue_jobs");   puts("[entrypoint] Creating solid_queue tables…");  load Rails.root.join("db/queue_schema.rb"); end' || true
+# Solid Cable
+bundle exec rails runner 'c=ActiveRecord::Base.connection; unless c.table_exists?("solid_cable_messages"); puts("[entrypoint] Creating solid_cable tables…"); load Rails.root.join("db/cable_schema.rb"); end' || true
+
 
 prod reset + reseed if explicitly requested
 if [[ "${RUN_PROD_RESET:-0}" == "1" ]]; then

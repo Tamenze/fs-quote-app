@@ -64,18 +64,18 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
-# Run and own only the runtime files as a non-root user for security
-RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER 1000:1000
-
 # ---- Render entrypoint: migrate + seed, then boot Puma ----
 # File must exist in your repo at: bin/render-entrypoint.sh
 COPY bin/render-entrypoint.sh /rails/bin/render-entrypoint.sh
 RUN chmod +x /rails/bin/render-entrypoint.sh
 
+# Run and own only the runtime files as a non-root user for security
+RUN groupadd --system --gid 1000 rails && \
+    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+    chown -R rails:rails db log storage tmp /rails/bin/render-entrypoint.sh
+
+USER 1000:1000
+
 # Render injects $PORT; ensure config/puma.rb uses port ENV.fetch("PORT", 3000)
 EXPOSE 3000
-
 ENTRYPOINT ["/rails/bin/render-entrypoint.sh"]

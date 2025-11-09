@@ -26,6 +26,8 @@ gem 'pagy', '~> 43.0'
 
 gem "rack-cors"
 
+gem "rack-attack"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
@@ -67,3 +69,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+group :production do 
+  gem "pg", "~> 1.5"
+end 

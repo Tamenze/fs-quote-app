@@ -22,7 +22,7 @@ namespace :data do
     if User.exists? || Tag.exists? || Quote.exists?
       puts "[data] DB not empty; skipping seed."
     else
-      puts "[data] DB empty; seeding…"
+      puts "[data] DB empty; seeding..."
       Rake::Task["db:seed"].invoke
     end
   end

@@ -38,7 +38,7 @@ bundle exec rails runner 'c=ActiveRecord::Base.connection; unless c.table_exists
 bundle exec rails runner 'c=ActiveRecord::Base.connection; unless c.table_exists?("solid_cable_messages"); puts("[entrypoint] Creating solid_cable tables…"); load Rails.root.join("db/cable_schema.rb"); end' || true
 
 
-prod reset + reseed if explicitly requested
+# reset + reseed if explicitly requested
 if [[ "${RUN_PROD_RESET:-0}" == "1" ]]; then
   echo "[entrypoint] RUN_PROD_RESET=1 -> invoking data:reset_and_seed (FORCE=${FORCE:-0})"
   FORCE="${FORCE:-0}" bundle exec rails data:reset_and_seed

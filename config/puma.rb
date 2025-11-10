@@ -34,11 +34,10 @@ preload_app!
 
 # Bind to Render's injected port
 port ENV.fetch("PORT", 10000)
-bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 10000)}"
 
 environment ENV.fetch("RAILS_ENV", "production")
 
-on_worker_boot do
+before_worker_boot do
   # Make sure each worker (re)connects to the DB
   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
 end

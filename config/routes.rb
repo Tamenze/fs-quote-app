@@ -12,7 +12,12 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  namespace :api do 
+  namespace :api do
+     if ENV["ENABLE_SENTRY_TEST_ROUTES"] == "1"
+      get "/ops/sentry_ping",  to: "ops#sentry_ping"
+      get "/ops/sentry_boom",  to: "ops#sentry_boom" 
+     end
+
     namespace :v1 do 
       resources :quotes do 
         collection do 

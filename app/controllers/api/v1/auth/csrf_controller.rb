@@ -20,6 +20,8 @@ module Api
           # Force a write so Rack emits Set-Cookie: _aword_session=...
           # The key name is arbitrary and never read, just marks the session "dirty".
           session[:_csrf_seed] ||= SecureRandom.hex(8) 
+          response.set_header("Cache-Control", "no-store")
+          response.set_header("Vary", "Origin, Cookie")
 
           # Ask Rails for the authenticity token tied to THIS session.
           token = form_authenticity_token

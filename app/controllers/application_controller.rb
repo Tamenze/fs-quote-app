@@ -3,6 +3,8 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   include Pagy::Method
 
+  before_action :set_sentry_context
+
   # raise on bad/missing token (recommended for cookie-based auth)
   protect_from_forgery with: :exception, prepend: true
 
@@ -14,6 +16,22 @@ class ApplicationController < ActionController::API
 
   private
 
+  def set_sentry_context
+    Sentry.configure_scope do |scope|
+      scope.set_tags(controller: controller_name, action: action_name)
+      scope.set_extras(
+        params:  request.filtered_parameters,
+        request_id: request.request_id,
+        ip: request.remote_ip
+      )
+      if current_user
+        scope.set_user(id: current_user.id, username: current_user.username)
+      else
+        # Clear user to avoid any leakage from previous requests
+      scope.set_user(nil)
+      end
+    end
+  end
 
   def render_not_found(e)
     render_problem status: 404, title: "Not found", detail: e.message, code: "not_found"

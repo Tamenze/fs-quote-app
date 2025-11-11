@@ -28,7 +28,8 @@ class ApplicationController < ActionController::API
         scope.set_user(id: current_user.id, username: current_user.username)
       else
         # Clear user to avoid any leakage from previous requests
-      scope.set_user(nil)
+      scope.set_user({})
+      scope.set_tags(anonymous: true)
       end
     end
   end

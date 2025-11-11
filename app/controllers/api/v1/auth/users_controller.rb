@@ -6,6 +6,7 @@ module Api
         def create
           user = User.new(user_params)
           if user.save 
+            reset_session #prevent session fixation
             session[:user_id] = user.id 
             render json: { id: user.id, username: user.username, email: user.email }, status: :created 
           else 

@@ -47,35 +47,6 @@ class ApplicationController < ActionController::API
     render json: { type:, title:, status:, detail:, code:, fields: fields }, status:
   end
 
-
-
-  # rescue_from ActiveRecord::RecordNotFound do |e|
-  #   render_problem status: 404, title: "Not found", detail: e.message, code: "not_found"
-  # end
-
-  # rescue_from ActionController::ParameterMissing do |e|
-  #   render_problem status: 400, title: "Bad request", detail: e.message, code: "bad_request"
-  # end
-
-  # rescue_from ActionController::InvalidAuthenticityToken do
-  #   render_problem status: 403, title: "Invalid CSRF token", detail: "Please refresh and try again.", code: "csrf_invalid"
-  # end
-
-  # rescue_from ActiveRecord::RecordInvalid do |e|
-  #   render_problem status: 422, title: "Validation failed", detail: "Fix the errors and try again.",
-  #                  code: "validation_failed", fields: e.record.errors.to_hash(true)
-  # end
-
-  # rescue_from StandardError do |e|
-  #   render_problem status: 500, title: "Server error", detail: "Something went wrong.", code: "server_error"
-  # end
-
-  # def render_problem(status:, title:, detail:, code:, fields: nil, type: "about:blank")
-  #   render json: { type:, title:, status:, detail:, code:, fields: fields }, status:
-  # end
-
-  # private 
-
   def current_user
     @current_user ||= User.find_by(id: session[:user_id])
   end 

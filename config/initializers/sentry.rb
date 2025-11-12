@@ -9,4 +9,9 @@ Sentry.init do |config|
   # Add data like request headers and IP for users,
   # see https://docs.sentry.io/platforms/ruby/data-management/data-collected/ for more info
   config.send_default_pii = true
+
+  config.logger = Logger.new($stdout)
+  config.debug  = true
 end
+
+Rails.logger.info("[sentry] initializer loaded env=#{Rails.env} dsn_present=#{ENV['SENTRY_DSN'].present?}")

@@ -17,21 +17,16 @@ class ApplicationController < ActionController::API
   private
 
   def set_sentry_context
+    uid = session[:user_id]
     Sentry.configure_scope do |scope|
+      scope.set_user(id: uid) if uid
       scope.set_tags(controller: controller_name, action: action_name)
-      scope.set_extras(
-        params:  request.filtered_parameters,
-        request_id: request.request_id,
-        ip: request.remote_ip
-      )
-      if current_user
-        scope.set_user(id: current_user.id, username: current_user.username)
-      else
-        # Clear user to avoid any leakage from previous requests
-      scope.set_user({})
-      scope.set_tags(anonymous: true)
-      end
+      scope.set_extras(params: request.filtered_parameters, request_id: request.request_id, ip: request.remote_ip)
+      scope.set_tags(anonymous: true) unless uid
     end
+  rescue => e
+    # absolutely never let context-setting break the request
+    Rails.logger.warn("set_sentry_context failed: #{e.class}: #{e.message}")
   end
 
   def render_not_found(e)
@@ -67,8 +62,14 @@ class ApplicationController < ActionController::API
   end
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id])
-  end 
+    return @current_user if defined?(@current_user)
+    return (@current_user = nil) unless session[:user_id] # no DB hit if no session
+    begin
+      @current_user = User.find_by(id: session[:user_id])
+    rescue ActiveRecord::ConnectionNotEstablished, PG::Error # fail-soft on DB trouble
+      @current_user = nil
+    end
+  end
 
   def require_login
     return if current_user

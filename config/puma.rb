@@ -26,20 +26,24 @@
 # threads. This includes Active Record's `pool` parameter in `database.yml`.
 
 # threads & workers
-max_threads = ENV.fetch("RAILS_MAX_THREADS", 1).to_i
+max_threads = ENV.fetch("RAILS_MAX_THREADS", 5).to_i
 threads max_threads, max_threads
 
-workers ENV.fetch("WEB_CONCURRENCY", 1).to_i
-preload_app!
+workers_count = Integer(ENV.fetch("WEB_CONCURRENCY", 0))
+workers workers_count if workers_count > 0
+
+preload_app! if workers_count > 0
 
 # Bind to Render's injected port
 port ENV.fetch("PORT", 10000)
 
 environment ENV.fetch("RAILS_ENV", "production")
 
-before_worker_boot do
-  # Make sure each worker (re)connects to the DB
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+# Only runs in cluster mode
+if workers_count > 0
+  before_worker_boot do
+    ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+  end
 end
 
 # Allow puma to be restarted by `bin/rails restart` command.
@@ -53,4 +57,4 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 quiet false
-log_requests true
+# log_requests true

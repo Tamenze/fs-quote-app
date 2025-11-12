@@ -26,7 +26,7 @@ test:
 production:
   primary: &prod_primary
     url: <%= ENV["DATABASE_URL"] %>
-    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 1)) %>
+    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
     prepared_statements: false
     advisory_locks: false
     reaping_frequency: <%= ENV.fetch("DB_REAP_FREQ", 10) %>

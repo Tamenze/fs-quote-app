@@ -10,7 +10,7 @@ Sentry.init do |config|
   # see https://docs.sentry.io/platforms/ruby/data-management/data-collected/ for more info
   config.send_default_pii = true
 
-  config.logger = Logger.new($stdout)
+  config.sdk_logger = Logger.new($stdout)
   config.debug  = true
 end
 

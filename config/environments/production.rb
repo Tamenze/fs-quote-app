@@ -3,6 +3,14 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Disable ActiveRecord prepared statements in production.
+  # Supabase's connection pooler (PgBouncer) does not maintain session state
+  # between requests, so prepared statements can go "missing" and cause
+  # errors like PG::InvalidSqlStatementName ("prepared statement 'a1' does not exist").
+  # Setting this to false forces Rails to send plain SQL instead of reusing
+  # prepared statements, which is safer and fully compatible with pooled connections.
+  config.active_record.prepare_statements = false
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 

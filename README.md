@@ -1,24 +1,18 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+API for [sayWord.dev](https://www.sayword.dev)
 
-Things you may want to cover:
+### :space_invader: Tech Stack
 
-* Ruby version
+**Server**
+- [Ruby on Rails](https://rubyonrails.org/)
 
-* System dependencies
+**Database**
+- [PostgreSQL](https://www.postgresql.org/)
+- [Supabase](https://supabase.com/) (managed Postgres)
 
-* Configuration
 
-* Database creation
+**Entity Relationship Diagram**
+<img width="4315" height="5065" alt="aWordERD" src="https://github.com/user-attachments/assets/4696f47c-d162-43a0-809a-6ba18b9ac0b4" />
 
-* Database initialization
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...

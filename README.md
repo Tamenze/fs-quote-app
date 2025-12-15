@@ -1,6 +1,4 @@
-# README
-
-API for [sayWord.dev](https://www.sayword.dev)
+### API for [sayWord.dev](https://www.sayword.dev)
 
 ### :space_invader: Tech Stack
 

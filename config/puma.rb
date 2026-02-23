@@ -32,7 +32,7 @@ threads max_threads, max_threads
 workers_count = Integer(ENV.fetch("WEB_CONCURRENCY", 0))
 workers workers_count if workers_count > 0
 
-preload_app! if workers_count > 0
+preload_app!
 
 # Bind to Render's injected port
 port ENV.fetch("PORT", 10000)

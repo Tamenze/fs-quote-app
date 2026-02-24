@@ -1,7 +1,6 @@
 module Api
   module V1
     class TagsController < ApplicationController
-
       def create
         return render json: { error: "Not authorized" }, status: :unauthorized unless current_user
 
@@ -15,10 +14,10 @@ module Api
         end
       end
 
-      def index 
-        render json: Tag.all 
+      def index
+        render json: Tag.all
       end
-      
+
       def show
          tag = Tag.includes(:creator, quotes: :user).find(params[:id])
          scope = tag.quotes.includes(:user)
@@ -39,23 +38,22 @@ module Api
           tag: tag_json.merge(quotes: quotes_json),
           pagination: @pagy.data_hash
         }, status: :ok
-      end 
+      end
 
 
-      def destroy 
+      def destroy
         tag = Tag.find(params[:id])
         tag.destroy
         head :no_content
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
-      end 
+      end
 
       private
 
-      def tag_params 
+      def tag_params
         params.require(:tag).permit(:name)
-      end 
-
-    end 
-  end 
+      end
+    end
+  end
 end

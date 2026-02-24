@@ -1,6 +1,5 @@
 module Api
   class OpsController < ApplicationController
-
     def sentry_ping
       Sentry.capture_message("Sentry prod ping #{Time.now.to_i}", level: :info)
       render json: { ok: true }

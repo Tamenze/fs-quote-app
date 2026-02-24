@@ -44,7 +44,7 @@ end
 # Load seed data
 # -----------------------------
 quotes = load_yaml_hash_list!("quotes.yml", key: "quotes")
-needed_quotes = NUM_USERS * QUOTES_MADE_PER_USER 
+needed_quotes = NUM_USERS * QUOTES_MADE_PER_USER
 raise "[seeds] Need at least #{needed_quotes} quotes, got #{quotes.size}." if quotes.size < needed_quotes
 
 raw_tag_names = load_yaml_string_list!("tags.yml", key: "tags")
@@ -115,8 +115,8 @@ ActiveRecord::Base.transaction do
   puts "[seeds] Creating quotes and linking 3 random tags each..."
   offset = 0
   users.each do |user|
-    my = quotes.slice(offset, QUOTES_MADE_PER_USER ) || []
-    offset += QUOTES_MADE_PER_USER 
+    my = quotes.slice(offset, QUOTES_MADE_PER_USER) || []
+    offset += QUOTES_MADE_PER_USER
 
     my.each do |h|
       body        = h["body"].to_s # model will strip/squish/de-quote
@@ -143,5 +143,5 @@ puts "[seeds] Done."
 puts "  Users:  #{User.count}"
 puts "  Tags:   #{Tag.count}"
 puts "  Quotes: #{Quote.count}"
-links = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM quotes_tags").rows.dig(0,0)
+links = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) FROM quotes_tags").rows.dig(0, 0)
 puts "  Quote-Tag associations:  #{links}"

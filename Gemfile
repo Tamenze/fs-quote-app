@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'dotenv', groups: [:development, :test]
+gem "dotenv", groups: [ :development, :test ]
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2", ">= 8.0.2.1"
@@ -22,7 +22,7 @@ gem "jbuilder"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
 
-gem 'pagy', '~> 43.0'
+gem "pagy", "~> 43.0"
 
 gem "rack-cors"
 
@@ -73,6 +73,6 @@ group :test do
   gem "selenium-webdriver"
 end
 
-group :production do 
+group :production do
   gem "pg", "~> 1.5"
-end 
+end

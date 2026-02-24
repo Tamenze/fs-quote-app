@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 Sentry.init do |config|
-  config.dsn = ENV['SENTRY_DSN']
+  config.dsn = ENV["SENTRY_DSN"]
   config.environment = Rails.env
 
-  config.breadcrumbs_logger = [:active_support_logger, :http_logger]
+  config.breadcrumbs_logger = [ :active_support_logger, :http_logger ]
   config.rails.report_rescued_exceptions = true
 
   # Add data like request headers and IP for users,

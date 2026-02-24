@@ -1,25 +1,24 @@
 module Api
   module V1
-    module Auth 
+    module Auth
       class SessionsController < ApplicationController
-
-          before_action :require_login, only: [:show]
+          before_action :require_login, only: [ :show ]
 
 
         def create
           user = User.find_by(email: login_params[:email].to_s.downcase.strip)
           if user&.authenticate(login_params[:password])
-            session[:user_id] = user.id 
+            session[:user_id] = user.id
             render json: user, status: :ok
           else
             render json: { error: "Invalid email or password" }, status: :unauthorized
-          end 
-        end 
+          end
+        end
 
-        def destroy 
+        def destroy
           reset_session
           head :no_content
-        end 
+        end
 
         def show
           if current_user
@@ -32,11 +31,10 @@ module Api
         private
         def user_json(u) = { id: u.id, username: u.username, email: u.email }
 
-        def login_params 
+        def login_params
           params.require(:user).permit(:email, :password)
-        end 
-
-      end 
+        end
+      end
     end
-  end 
-end 
+  end
+end

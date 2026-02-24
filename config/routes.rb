@@ -15,25 +15,25 @@ Rails.application.routes.draw do
   namespace :api do
      if ENV["ENABLE_SENTRY_TEST_ROUTES"] == "1"
       get "/ops/sentry_ping",  to: "ops#sentry_ping"
-      get "/ops/sentry_boom",  to: "ops#sentry_boom" 
+      get "/ops/sentry_boom",  to: "ops#sentry_boom"
      end
 
-    namespace :v1 do 
-      resources :quotes do 
-        collection do 
-          get 'random', to: 'quotes#show_random'
-        end 
-      end 
-      resources :tags 
-      resources :users, only: [:show, :index, :update, :destroy]
+    namespace :v1 do
+      resources :quotes do
+        collection do
+          get "random", to: "quotes#show_random"
+        end
+      end
+      resources :tags
+      resources :users, only: [ :show, :index, :update, :destroy ]
 
-      namespace :auth do 
+      namespace :auth do
         resource :csrf, only: :show
-        post 'sign_up' => 'users#create'
-        post 'login' => 'sessions#create'
-        get 'me' => 'sessions#show'
-        delete 'logout' => 'sessions#destroy'
-      end 
-    end 
-  end 
+        post "sign_up" => "users#create"
+        post "login" => "sessions#create"
+        get "me" => "sessions#show"
+        delete "logout" => "sessions#destroy"
+      end
+    end
+  end
 end

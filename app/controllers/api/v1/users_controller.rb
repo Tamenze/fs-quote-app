@@ -1,23 +1,22 @@
 module Api
   module V1
     class UsersController < ApplicationController
-
-      before_action :require_login, only: [:update]
-      before_action :set_user, only: [:show, :update]
-      before_action :authorize_user, only: [:update]
+      before_action :require_login, only: [ :update ]
+      before_action :set_user, only: [ :show, :update ]
+      before_action :authorize_user, only: [ :update ]
 
 
       def index
         users = User.order(created_at: :desc)
-        render json: users.as_json(only: [:id, :username, :email, :created_at])
-      end 
+        render json: users.as_json(only: [ :id, :username, :email, :created_at ])
+      end
 
-      def show 
+      def show
         scope = @user.quotes
-                .includes(:tags, :user)        
-                .order(created_at: :desc) 
-        @pagy, quotes = pagy(scope) 
-        
+                .includes(:tags, :user)
+                .order(created_at: :desc)
+        @pagy, quotes = pagy(scope)
+
 
         user_json = @user.as_json(only: %i[id username email created_at updated_at])
 
@@ -34,12 +33,12 @@ module Api
 
         render json: {
           user: user_json,
-          pagination: @pagy.data_hash     
+          pagination: @pagy.data_hash
         }, status: :ok
-      end 
+      end
 
-      def update 
-        if user_params[:username].present? 
+      def update
+        if user_params[:username].present?
           @user.assign_attributes(user_params.slice(:username))
         end
 
@@ -49,42 +48,40 @@ module Api
           end
          @user.password = user_params[:password]
          @user.password_confirmation = user_params[:password_confirmation]
-        end 
+        end
 
         if @user.save
           render json: @user, status: :ok
         else
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
+      end
 
-      end 
 
-
-      def destroy 
-        #tk
-      end 
+      def destroy
+        # tk
+      end
 
       private
 
       def set_user
         begin
-          @user = User.includes(:created_tags, quotes: [:user, :tags]).find(params[:id])
+          @user = User.includes(:created_tags, quotes: [ :user, :tags ]).find(params[:id])
         rescue ActiveRecord::RecordNotFound
-          render json: { error: 'User not found' }, status: :not_found and return 
+          render json: { error: "User not found" }, status: :not_found and return
         end
       end
 
       def user_params
         params.require(:user).permit(:username, :current_password, :password, :password_confirmation)
-      end 
+      end
 
       def authorize_user
         # only the logged-in user can update their own record
         unless current_user && current_user.id == @user.id
-          render json: { error: 'Forbidden' }, status: :forbidden
+          render json: { error: "Forbidden" }, status: :forbidden
         end
-      end 
-
-    end 
+      end
+    end
   end
-end 
+end

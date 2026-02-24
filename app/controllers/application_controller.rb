@@ -75,9 +75,7 @@ class ApplicationController < ActionController::API
   end
 
   def require_login
-    Rails.logger.info("[TIMING] require_login start")
     result = current_user
-    Rails.logger.info("[TIMING] current_user returned: #{result.inspect}")
     return if result
     render json: { error: "Not authorized" }, status: :unauthorized
   end

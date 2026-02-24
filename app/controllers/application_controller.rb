@@ -17,14 +17,17 @@ class ApplicationController < ActionController::API
   private
 
   def set_sentry_context
+    Rails.logger.info("[TIMING] set_sentry_context start")
     uid = session[:user_id]
+    Rails.logger.info("[TIMING] session read done, uid=#{uid.inspect}")
     Sentry.configure_scope do |scope|
       scope.set_user(id: uid) if uid
       scope.set_tags(controller: controller_name, action: action_name)
       scope.set_extras(params: request.filtered_parameters, request_id: request.request_id, ip: request.remote_ip)
       scope.set_tags(anonymous: true) unless uid
     end
-  rescue => e
+    Rails.logger.info("[TIMING] sentry scope done")
+   rescue => e
     # absolutely never let context-setting break the request
     Rails.logger.warn("set_sentry_context failed: #{e.class}: #{e.message}")
   end
@@ -72,7 +75,10 @@ class ApplicationController < ActionController::API
   end
 
   def require_login
-    return if current_user
+    Rails.logger.info("[TIMING] require_login start")
+    result = current_user
+    Rails.logger.info("[TIMING] current_user returned: #{result.inspect}")
+    return if result
     render json: { error: "Not authorized" }, status: :unauthorized
   end
 end

@@ -11,8 +11,12 @@ module Aword
     # API-only app, but we add cookies + session back
     config.api_only = true
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
-
+    config.middleware.use ActionDispatch::Session::CookieStore,
+      key: "_aword_session",
+      expire_after: 14.days,
+      httponly: true,
+      same_site: :none,
+      secure: Rails.env.production?
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0

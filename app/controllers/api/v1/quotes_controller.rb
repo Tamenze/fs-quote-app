@@ -61,14 +61,16 @@ module Api
       end
 
       def show_random
+        Rails.logger.info("[TIMING] show_random before query")
         quote = Quote.order("RANDOM()").first
+        Rails.logger.info("[TIMING] show_random after query")
         if quote
           render json: quote.as_json(include: {
             tags: { only: [ :id, :name ] },
             user: { only: [ :id, :username ] }
           })
         else
-            render json: { error: "No quotes yet" }, status: :not_found
+          render json: { error: "No quotes yet" }, status: :not_found
         end
       end
 

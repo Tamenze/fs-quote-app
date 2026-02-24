@@ -29,5 +29,6 @@ production:
     pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
     checkout_timeout: <%= ENV.fetch("DB_CHECKOUT_TIMEOUT", 5) %>
     reconnect: true
+    idle_timeout: 300
     variables:
       statement_timeout: 5000

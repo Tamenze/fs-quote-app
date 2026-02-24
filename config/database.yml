@@ -30,9 +30,3 @@ production:
     checkout_timeout: <%= ENV.fetch("DB_CHECKOUT_TIMEOUT", 5) %>
     variables:
       statement_timeout: 5000
-  cache:
-    <<: *prod_primary
-  queue:
-    <<: *prod_primary
-  cable:
-    <<: *prod_primary

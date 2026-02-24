@@ -2,6 +2,8 @@
 
 Sentry.init do |config|
   config.dsn = ENV["SENTRY_DSN"]
+  config.transport.timeout = 3
+  config.transport.open_timeout = 2
   config.environment = Rails.env
 
   config.breadcrumbs_logger = [ :active_support_logger, :http_logger ]
